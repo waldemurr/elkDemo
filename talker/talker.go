@@ -24,6 +24,7 @@ var val int
 func main() {
 	log := logrus.New()
 	log.SetFormatter(&ecslogrus.Formatter{})
+	// log.SetFormatter(&logrus.JSONFormatter{})
 	// Add custom fields.
 	logger := log.WithFields(stdFields).WithFields(logrus.Fields{"function": "main"})
 
@@ -40,7 +41,9 @@ func main() {
 			logger.Error("done")
 		default:
 			logger.Trace("select me before i go")
-			time.Sleep(time.Second)
+			
 		}
+		logger.Info("val is ", val)
+		time.Sleep(time.Second)
 	}
 }

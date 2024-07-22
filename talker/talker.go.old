@@ -8,7 +8,7 @@ import (
 
 var stdFields = log.Fields{
 	"service": "Talker",
-	"file":    "historysync.go",
+	"file":    "talker.go",
 }
 var val int
 

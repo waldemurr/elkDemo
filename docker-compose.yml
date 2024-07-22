@@ -223,7 +223,7 @@ services:
       dockerfile: Dockerfile
     environment:
       LOG_HOST: "http://127.0.0.1"
-      LOG_PORT: "5228" 
+      LOG_PORT: ${LOGSTASH_PORT}
     ports:
       - 9993:3000
     depends_on:
