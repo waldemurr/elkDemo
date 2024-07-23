@@ -1,0 +1,15 @@
+allow_superuser: false
+http.host: 0.0.0.0
+http.port: 9600-9700
+log.level: info
+node.name: logstash-node
+path.config: ./config/pipelines/logstash.conf
+path.data: /var/lib/logstash
+path.logs: /var/log/logstash
+pipeline:
+  batch:
+    delay: 50
+    size: 125
+  workers: 4
+run_as_superuser: ALLOW
+xpack.monitoring.enabled: false

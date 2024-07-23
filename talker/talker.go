@@ -1,49 +1,39 @@
 package main
 
 import (
-	"math/rand"
-	"time"
-
-	"go.elastic.co/ecslogrus"
-	// "github.com/caarlos0/env/v11"
-	"github.com/sirupsen/logrus"
+	"github.com/caarlos0/env/v11"
+	logstash_logger "github.com/KaranJagtiani/go-logstash"
+	log "github.com/sirupsen/logrus"
 )
 
-var stdFields = logrus.Fields{
+var stdFields = log.Fields{
 	"service": "Talker",
 	"file":    "talker.go",
 }
-
 var val int
 
-// type config struct {
-// 	Port string `env:"LOG_PORT" envDefault:"5228"`
-// 	Host string `env:"LOG_HOST" envDefault:"logstash"`
-// }
+type config struct {
+	Port int `env:"LOG_PORT" envDefault:"5044"`
+	Host string `env:"LOG_HOST" envDefault:"logstash"`
+}
 
 func main() {
-	log := logrus.New()
-	log.SetFormatter(&ecslogrus.Formatter{})
-	// log.SetFormatter(&logrus.JSONFormatter{})
-	// Add custom fields.
-	logger := log.WithFields(stdFields).WithFields(logrus.Fields{"function": "main"})
-
-	for {
-		val = rand.Int()
-		switch val % 5 {
-		case 0:
-			logger.Info("Setup redis orders...")
-		case 1:
-			logger.Debug("Unblock all users done!")
-		case 2:
-			logger.Warn("Block all users done!")
-		case 3:
-			logger.Error("done")
-		default:
-			logger.Trace("select me before i go")
-			
-		}
-		logger.Info("val is ", val)
-		time.Sleep(time.Second)
+	
+	cfg, err := env.ParseAs[config]()
+	if err != nil {
+		log.Error(err)
 	}
+
+	logger := logstash_logger.Init(cfg.Host, 5044, "tcp", 5)
+
+    payload := map[string]interface{}{
+        "message": "TEST_MSG",
+        "error":   false,
+    }
+
+    logger.Log(payload) // Generic log
+    logger.Info(payload) // Adds "severity": "INFO"
+    logger.Debug(payload) // Adds "severity": "DEBUG"
+    logger.Warn(payload) // Adds "severity": "WARN"
+    logger.Error(payload) // Adds "severity": "ERROR"
 }
