@@ -33,9 +33,6 @@ func main() {
 	hook := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
 
 	log.Hooks.Add(hook)
-	// log.AddHook(logrus.New().Hooks[][])
-	// log.SetFormatter(&logrus.JSONFormatter{})
-	// Add custom fields.
 	logger := log.WithFields(stdFields).WithFields(logrus.Fields{"function": "main"})
 
 	for {

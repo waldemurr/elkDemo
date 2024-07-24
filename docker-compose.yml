@@ -255,23 +255,21 @@ services:
         condition: service_healthy
     links:
       - logstash01
-    # networks:
-    #   - elastic
     logging:
       options:
         max-size: "10m"
         max-file: "3"
     restart: always
 
-  log-generator:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    links:
-      - logstash01
-    environment:
-      LOG_HOST: "logstash01"
-      LOG_PORT: ${LOGSTASH_PORT_TCP}
-    depends_on:
-      es01:
-        condition: service_healthy
+  # log-generator:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   links:
+  #     - logstash01
+  #   environment:
+  #     LOG_HOST: "logstash01"
+  #     LOG_PORT: ${LOGSTASH_PORT_TCP}
+  #   depends_on:
+  #     es01:
+  #       condition: service_healthy
