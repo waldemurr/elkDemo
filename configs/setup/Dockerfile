@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-WORKDIR app
+WORKDIR /app
 
 COPY ./setup.sh .
 RUN apk update && apk add bash
