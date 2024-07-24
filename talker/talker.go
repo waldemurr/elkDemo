@@ -8,7 +8,7 @@ import (
 	logrustash "github.com/bshuster-repo/logrus-logstash-hook"
 	"go.elastic.co/ecslogrus"
 
-	// "github.com/caarlos0/env/v11"
+	"github.com/caarlos0/env/v11"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,9 +24,14 @@ type config struct {
 }
 
 func main() {
+	cfg := config{}
+	if err := env.Parse(&cfg); err != nil {
+		logrus.Error(err)
+	}
+
 	log := logrus.New()
 	log.SetFormatter(&ecslogrus.Formatter{})
-	conn, err := net.Dial("tcp", "logstash01:5000")
+	conn, err := net.Dial("tcp", cfg.Host + ":" + cfg.Port)
 	if err != nil {
 		log.Fatal(err)
 	}
