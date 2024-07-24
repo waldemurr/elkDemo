@@ -1,0 +1,43 @@
+outputs:
+  default:
+    type: elasticsearch
+    hosts:
+      - 'https://es01:9200'
+    api_key: 'Ks704JABvL1FggU5nb2n:SxrP_L6DSr2lU5EIzI0Sow'
+inputs:
+  - id: system-logs-139b405c-8dfd-4a16-8901-438fc00e964c
+    type: logfile
+    data_stream:
+      namespace: default
+    streams:
+      - id: logfile-system.auth-139b405c-8dfd-4a16-8901-438fc00e964c
+        data_stream:
+          dataset: system.auth
+          type: logs
+        paths:
+          - /var/log/auth.log*
+          - /var/log/secure*
+        exclude_files:
+          - .gz$
+        multiline:
+          pattern: ^s
+          match: after
+        tags:
+          - system-auth
+        processors:
+          - add_locale: null
+      - id: logfile-system.syslog-139b405c-8dfd-4a16-8901-438fc00e964c
+        data_stream:
+          dataset: system.syslog
+          type: logs
+        paths:
+          - /var/log/messages*
+          - /var/log/syslog*
+          - /var/log/system*
+        exclude_files:
+          - .gz$
+        multiline:
+          pattern: ^s
+          match: after
+        processors:
+          - add_locale: null
