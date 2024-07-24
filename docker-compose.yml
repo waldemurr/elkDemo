@@ -199,8 +199,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:  
       - ELASTIC_USER=${ELASTIC_USERNAME}
-    environment:  
-      - ELASTIC_USER=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTIC_HOSTS=https://es01:9200
       - KIBANA_HOSTS=http://kibana:5601
@@ -216,7 +214,6 @@ services:
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
     labels:
       co.elastic.logs/module: logstash
-    user: root    
     user: root    
     volumes:
       - certs:/usr/share/logstash/certs
@@ -250,7 +247,6 @@ services:
       dockerfile: Dockerfile
     environment:
       LOG_HOST: "http://127.0.0.1"
-      LOG_PORT: ${LOGSTASH_PORT_TCP}
       LOG_PORT: ${LOGSTASH_PORT_TCP}
     ports:
       - 9993:3000

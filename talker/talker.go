@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var stdFields = log.Fields{
+var stdFields = logrus.Fields{
 	"service": "Talker",
 	"file":    "talker.go",
 }
