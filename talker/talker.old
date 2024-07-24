@@ -1,15 +1,19 @@
 package main
 
 import (
-	"github.com/caarlos0/env/v11"
-	logstash_logger "github.com/KaranJagtiani/go-logstash"
-	log "github.com/sirupsen/logrus"
+	"math/rand"
+	"time"
+
+	"go.elastic.co/ecslogrus"
+	// "github.com/caarlos0/env/v11"
+	"github.com/sirupsen/logrus"
 )
 
-var stdFields = log.Fields{
+var stdFields = logrus.Fields{
 	"service": "Talker",
 	"file":    "talker.go",
 }
+
 var val int
 
 type config struct {

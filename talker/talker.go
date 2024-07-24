@@ -12,11 +12,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var stdFields = logrus.Fields{
+var stdFields = log.Fields{
 	"service": "Talker",
 	"file":    "talker.go",
 }
-
 var val int
 
 type config struct {

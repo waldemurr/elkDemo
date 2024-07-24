@@ -67,6 +67,7 @@ services:
         until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
         echo "Setting kibana_system password";
         until curl -s -X POST --cacert config/certs/ca/ca.crt -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        until curl -s -X POST --cacert config/certs/ca/ca.crt -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://es01:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
         echo "All done!";
       '
     healthcheck:
@@ -86,6 +87,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
       # - ./configs/elasticsearch/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      # - ./configs/elasticsearch/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
       - ${ES_PORT}:9200
     environment:
@@ -104,6 +106,8 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_USERNAME}
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_USERNAME}
     mem_limit: ${ES_MEM_LIMIT}
@@ -166,6 +170,7 @@ services:
       - certs:/usr/share/metricbeat/certs
       - metricbeatdata01:/usr/share/metricbeat/data
       - "./configs/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
+      - "./configs/metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
       - "/proc:/hostfs/proc:ro"
@@ -188,8 +193,12 @@ services:
       - filebeatdata01:/usr/share/filebeat/data
       - "./configs/filebeat/filebeat_ingest_data/:/usr/share/filebeat/ingest_data/"
       - "./configs/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "./configs/filebeat/filebeat_ingest_data/:/usr/share/filebeat/ingest_data/"
+      - "./configs/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:  
+      - ELASTIC_USER=${ELASTIC_USERNAME}
     environment:  
       - ELASTIC_USER=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
@@ -208,6 +217,7 @@ services:
     labels:
       co.elastic.logs/module: logstash
     user: root    
+    user: root    
     volumes:
       - certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
@@ -215,9 +225,15 @@ services:
       - ./configs/logstash/config.yml:/usr/share/logstash/config/logstash.yml
       - ./configs/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
       - ./configs/logstash/pipelines:/usr/share/logstash/config/pipelines:ro
+      - ./configs/logstash/logstash_ingest_data/:/usr/share/logstash/ingest_data/
+      - ./configs/logstash/config.yml:/usr/share/logstash/config/logstash.yml
+      - ./configs/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./configs/logstash/pipelines:/usr/share/logstash/config/pipelines:ro
     environment:
       # - LS_JAVA_OPTS="-Xmx512m -Xms512m"
+      # - LS_JAVA_OPTS="-Xmx512m -Xms512m"
       - xpack.monitoring.enabled=false
+      - ELASTIC_USER=${ELASTIC_USERNAME}
       - ELASTIC_USER=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTIC_HOSTS=https://es01:9200
@@ -234,6 +250,7 @@ services:
       dockerfile: Dockerfile
     environment:
       LOG_HOST: "http://127.0.0.1"
+      LOG_PORT: ${LOGSTASH_PORT_TCP}
       LOG_PORT: ${LOGSTASH_PORT_TCP}
     ports:
       - 9993:3000
